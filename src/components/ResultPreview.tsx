@@ -1,26 +1,66 @@
 import { useState } from "react";
 import { Wand2, Download, RefreshCw, Sparkles } from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { toast } from "sonner";
 
 interface ResultPreviewProps {
   uploadedImage: string | null;
   selectedClothing: number | null;
+  clothingImage: string | null;
 }
 
-export function ResultPreview({ uploadedImage, selectedClothing }: ResultPreviewProps) {
+export function ResultPreview({ uploadedImage, selectedClothing, clothingImage }: ResultPreviewProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
-  const canGenerate = uploadedImage && selectedClothing;
+  const canGenerate = uploadedImage && selectedClothing && clothingImage;
 
   const handleGenerate = async () => {
     if (!canGenerate) return;
 
     setIsGenerating(true);
-    // Simulate AI generation
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    // For demo, we'll just use the uploaded image
-    setGeneratedImage(uploadedImage);
-    setIsGenerating(false);
+    setGeneratedImage(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-tryon', {
+        body: {
+          personImage: uploadedImage,
+          clothingImage: clothingImage,
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      if (data?.resultImage) {
+        setGeneratedImage(data.resultImage);
+        toast.success("换装效果生成成功！");
+      } else {
+        throw new Error("未能获取生成结果");
+      }
+    } catch (error) {
+      console.error("AI try-on error:", error);
+      toast.error(error instanceof Error ? error.message : "换装生成失败，请重试");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleDownload = () => {
+    if (!generatedImage) return;
+
+    const link = document.createElement('a');
+    link.href = generatedImage;
+    link.download = `ai-tryon-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("图片已下载");
   };
 
   return (
@@ -57,7 +97,7 @@ export function ResultPreview({ uploadedImage, selectedClothing }: ResultPreview
             </div>
             <div className="text-center">
               <p className="text-foreground font-medium">AI 正在创作中...</p>
-              <p className="text-sm text-muted-foreground">请稍候片刻</p>
+              <p className="text-sm text-muted-foreground">通常需要 10-30 秒</p>
             </div>
           </div>
         ) : (
@@ -109,6 +149,7 @@ export function ResultPreview({ uploadedImage, selectedClothing }: ResultPreview
 
         {generatedImage && (
           <button
+            onClick={handleDownload}
             className="w-full py-4 rounded-xl font-semibold glass text-foreground flex items-center justify-center gap-2 hover:bg-card/80 transition-all duration-300"
           >
             <Download className="w-5 h-5" />

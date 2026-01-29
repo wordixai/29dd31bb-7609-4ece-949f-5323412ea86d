@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Header } from "../components/Header";
 import { Hero } from "../components/Hero";
 import { UploadSection } from "../components/UploadSection";
-import { ClothingGallery } from "../components/ClothingGallery";
+import { ClothingGallery, clothingItems } from "../components/ClothingGallery";
 import { ResultPreview } from "../components/ResultPreview";
 import { Features } from "../components/Features";
 import { Footer } from "../components/Footer";
@@ -22,6 +22,11 @@ export default function Index() {
       setUploadedImage(null);
     }
   };
+
+  // Get selected clothing image URL
+  const selectedClothingImage = selectedClothing
+    ? clothingItems.find(item => item.id === selectedClothing)?.image || null
+    : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -64,6 +69,7 @@ export default function Index() {
               <ResultPreview
                 uploadedImage={uploadedImage}
                 selectedClothing={selectedClothing}
+                clothingImage={selectedClothingImage}
               />
             </div>
           </div>

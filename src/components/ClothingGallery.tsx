@@ -1,6 +1,6 @@
 import { Check, Shirt } from "lucide-react";
 
-const clothingItems = [
+export const clothingItems = [
   {
     id: 1,
     name: "优雅西装",

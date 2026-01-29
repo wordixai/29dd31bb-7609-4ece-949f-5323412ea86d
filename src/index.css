@@ -4,10 +4,118 @@
 
 @layer base {
   :root {
-   
+    /* Deep dark theme with purple-pink accent */
+    --background: 240 15% 6%;
+    --foreground: 0 0% 95%;
+
+    /* Purple-pink gradient primary */
+    --primary: 280 80% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - subtle purple */
+    --secondary: 260 30% 15%;
+    --secondary-foreground: 0 0% 95%;
+
+    /* Muted tones */
+    --muted: 240 10% 12%;
+    --muted-foreground: 240 5% 55%;
+
+    /* Accent - pink glow */
+    --accent: 330 80% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Card - glass effect base */
+    --card: 240 15% 10%;
+    --card-foreground: 0 0% 95%;
+
+    /* Borders */
+    --border: 260 20% 20%;
+    --input: 260 20% 18%;
+    --ring: 280 80% 60%;
+
+    /* Destructive */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Popover */
+    --popover: 240 15% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Radius */
+    --radius: 1rem;
+
+    /* Custom gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(280 80% 60%), hsl(330 80% 65%));
+    --gradient-glow: radial-gradient(circle at center, hsl(280 80% 60% / 0.3), transparent 70%);
+    --gradient-card: linear-gradient(180deg, hsl(260 30% 12% / 0.8), hsl(240 15% 8% / 0.9));
+
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(280 80% 60% / 0.3);
+    --shadow-glow-lg: 0 0 60px hsl(280 80% 60% / 0.4);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.3);
+
+    /* Sidebar */
+    --sidebar-background: 240 15% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 280 80% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 260 30% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 260 20% 20%;
+    --sidebar-ring: 280 80% 60%;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-card/60 backdrop-blur-xl border border-border/50;
   }
 
-  .dark {
-
+  .glass-strong {
+    @apply bg-card/80 backdrop-blur-2xl border border-border/60;
   }
+
+  .text-gradient {
+    @apply bg-gradient-primary bg-clip-text text-transparent;
+  }
+
+  .glow-border {
+    @apply relative;
+  }
+
+  .glow-border::before {
+    content: '';
+    @apply absolute -inset-px rounded-[inherit] bg-gradient-primary opacity-50;
+    z-index: -1;
+    filter: blur(8px);
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* Selection */
+::selection {
+  background: hsl(var(--primary) / 0.3);
+  color: hsl(var(--foreground));
 }
